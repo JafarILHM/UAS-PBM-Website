@@ -2,6 +2,10 @@
 
 use Illuminate\Support\Facades\Route;
 
+Route::get('/login', function () {
+    return response()->json(['message' => 'Login route dummy.'], 200);
+});
+
 Route::get('/', function () {
     return view('index');
 });
