@@ -39,6 +39,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/items/incoming', [ItemController::class, 'incoming']);
     Route::post('/items/outgoing', [ItemController::class, 'outgoing']);
     Route::get('/items/export', [ItemController::class, 'export']);
+    Route::get('/items/{item}/barcode', [ItemController::class, 'showBarcode']);
+    Route::get('/items/scan/{code}', [ItemController::class, 'scan']);
 
     // Suppliers
     Route::apiResource('suppliers', SupplierController::class);

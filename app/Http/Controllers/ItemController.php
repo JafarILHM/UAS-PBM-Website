@@ -9,7 +9,9 @@ use App\Models\OutgoingItem;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
 use Illuminate\Support\Facades\Auth; // Import Auth facade
-// use Maatwebsite\Excel\Facades\Excel; // For Excel export
+use Maatwebsite\Excel\Facades\Excel; // For Excel export
+use App\Exports\ItemsExport; // Import the ItemsExport class
+use Milon\Barcode\DNS1D; // Import the DNS1D facade
 
 class ItemController extends Controller
 {
@@ -23,7 +25,6 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'sku' => 'required|unique:items,sku',
-            'barcode' => 'nullable|unique:items,barcode',
             'name' => 'required|string|max:255',
             'stock_minimum' => 'nullable|integer|min:0',
             'supplier_id' => 'nullable|exists:suppliers,id',
@@ -32,6 +33,12 @@ class ItemController extends Controller
         ]);
 
         $item = Item::create($validated);
+        $item->barcode = $item->sku; // Set barcode to SKU
+        // Generate barcode_base64
+        $barcodeSvg = DNS1D::get   ('CODE128', $item->sku, 2, 33, 'black', true);
+        $item->barcode_base64 = base64_encode($barcodeSvg);
+        $item->save();
+
         return response()->json($item, 201);
     }
 
@@ -44,7 +51,7 @@ class ItemController extends Controller
     {
         $validated = $request->validate([
             'sku' => ['required', Rule::unique('items')->ignore($item->id)],
-            'barcode' => ['nullable', Rule::unique('items')->ignore($item->id)],
+            'barcode' => ['nullable', 'string', Rule::unique('items')->ignore($item->id)], // Updated validation
             'name' => 'required|string|max:255',
             'stock_minimum' => 'nullable|integer|min:0',
             'supplier_id' => 'nullable|exists:suppliers,id',
@@ -53,6 +60,14 @@ class ItemController extends Controller
         ]);
 
         $item->update($validated);
+
+        // If SKU changes, regenerate barcode_base64
+        if ($item->isDirty('sku')) {
+            $item->barcode = $item->sku; // Update barcode to new SKU
+            $barcodeSvg = DNS1D::get   ('CODE128', $item->sku, 2, 33, 'black', true);
+            $item->barcode_base64 = base64_encode($barcodeSvg);
+            $item->save();
+        }
         return response()->json($item);
     }
 
@@ -65,7 +80,7 @@ class ItemController extends Controller
     public function incoming(Request $request)
     {
         $validated = $request->validate([
-            'item_id' => 'required|exists:items,id',
+            'item_identifier' => 'required|string', // Can be SKU or Barcode
             'batch_number' => 'required|string|max:255',
             'production_date' => 'nullable|date',
             'expiry_date' => 'nullable|date|after_or_equal:production_date',
@@ -74,7 +89,11 @@ class ItemController extends Controller
             'deadline' => 'nullable|date|after_or_equal:date_in',
         ]);
 
-        $item = Item::find($validated['item_id']);
+        $item = $this->findItemByIdentifier($validated['item_identifier']);
+
+        if (!$item) {
+            return response()->json(['message' => 'Item not found.'], 404);
+        }
 
         if (!Auth::check()) {
             return response()->json(['message' => 'Unauthenticated.'], 401);
@@ -113,15 +132,24 @@ class ItemController extends Controller
     public function outgoing(Request $request)
     {
         $validated = $request->validate([
-            'item_id' => 'required|exists:items,id',
+            'item_identifier' => 'required|string', // Can be SKU or Barcode
             'item_batch_id' => 'required|exists:item_batches,id',
             'qty' => 'required|integer|min:1',
             'purpose' => 'nullable|string|max:255',
             'date_out' => 'nullable|date',
         ]);
 
-        $item = Item::find($validated['item_id']);
+        $item = $this->findItemByIdentifier($validated['item_identifier']);
+
+        if (!$item) {
+            return response()->json(['message' => 'Item not found.'], 404);
+        }
+
         $itemBatch = ItemBatch::find($validated['item_batch_id']);
+
+        if (!$itemBatch || $itemBatch->item_id !== $item->id) {
+            return response()->json(['message' => 'Item batch not found or does not belong to the specified item.'], 404);
+        }
 
         if (!Auth::check()) {
             return response()->json(['message' => 'Unauthenticated.'], 401);
@@ -156,11 +184,37 @@ class ItemController extends Controller
         return response()->json(['message' => 'Item outgoing recorded successfully', 'item' => $item], 200);
     }
 
+    private function findItemByIdentifier(string $identifier): ?Item
+    {
+        return Item::where('sku', $identifier)
+                   ->orWhere('barcode', $identifier)
+                   ->first();
+    }
+
     public function export()
     {
-        // Placeholder for Excel export functionality
-        // You would typically use a library like Maatwebsite\Excel here.
-        // Example: return Excel::download(new ItemsExport, 'items.xlsx');
-        return response()->json(['message' => 'Export functionality is not yet implemented.']);
+        return Excel::download(new ItemsExport, 'items.xlsx');
+    }
+
+    public function showBarcode(Item $item)
+    {
+        if ($item->barcode_base64) {
+            return response()->json(['barcode_base64' => $item->barcode_base64]);
+        }
+        return response()->json(['message' => 'Barcode not found for this item.'], 404);
+    }
+
+    public function scan($code)
+    {
+        $item = Item::with(['supplier', 'category', 'unit', 'itemBatches'])
+                    ->where('sku', $code)
+                    ->orWhere('barcode', $code)
+                    ->first();
+
+        if ($item) {
+            return response()->json($item);
+        }
+
+        return response()->json(['message' => 'Item not found.'], 404);
     }
 }
