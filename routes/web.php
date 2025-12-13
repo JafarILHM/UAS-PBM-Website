@@ -35,8 +35,6 @@ Route::middleware('auth')->group(function () {
     Route::resource('items', \App\Http\Controllers\ItemController::class)->except(['show']);
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
 
-<<<<<<< Updated upstream
-=======
 
     // Transaksi Barang Masuk dan keluar
     Route::resource('incoming', \App\Http\Controllers\IncomingItemController::class);
@@ -46,7 +44,6 @@ Route::middleware('auth')->group(function () {
     Route::get('items/export', [\App\Http\Controllers\ItemController::class, 'export'])->name('items.export');
     Route::resource('items', \App\Http\Controllers\ItemController::class);
 
->>>>>>> Stashed changes
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
