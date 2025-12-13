@@ -18,7 +18,8 @@
                     <i data-feather="plus"></i> Tambah Kategori
                 </button>
             </div>
-            <div class="card-body">
+
+            <div class="table-responsive">
                 <table class="table table-hover my-0">
                     <thead>
                         <tr>
