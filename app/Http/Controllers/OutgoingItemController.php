@@ -17,10 +17,11 @@ class OutgoingItemController extends Controller
 
     public function create()
     {
-        // PERBAIKAN: Menghapus 'unit' dari select
-        $items = Item::where('stock', '>', 0)
-                     ->select('id', 'name', 'sku', 'stock')
-                     ->get();
+        // PERBAIKAN: Tambahkan with('unit') dan select 'unit_id'
+        $items = Item::with('unit')
+            ->where('stock', '>', 0)
+            ->select('id', 'name', 'sku', 'stock', 'unit_id')
+            ->get();
 
         return view('outgoing.create', compact('items'));
     }

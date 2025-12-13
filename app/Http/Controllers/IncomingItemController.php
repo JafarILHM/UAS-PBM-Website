@@ -20,8 +20,12 @@ class IncomingItemController extends Controller
     public function create()
     {
         $suppliers = Supplier::all();
-        // PERBAIKAN: Menghapus 'unit' dari select karena kolomnya sudah tidak ada di tabel items
-        $items = Item::select('id', 'name', 'sku')->get();
+
+        // PERBAIKAN: Tambahkan with('unit') dan select 'unit_id'
+        $items = Item::with('unit')
+            ->select('id', 'name', 'sku', 'unit_id')
+            ->get();
+
         return view('incoming.create', compact('suppliers', 'items'));
     }
 

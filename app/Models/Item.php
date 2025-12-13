@@ -9,22 +9,26 @@ class Item extends Model
 {
     use HasFactory;
 
-    // Kolom yang boleh diisi
     protected $fillable = [
         'sku',
         'barcode',
         'name',
         'description',
         'category_id',
-        'unit',
+        'unit_id', 
         'stock',
         'stock_minimum',
         'image'
     ];
 
-    // Relasi: Satu barang milik satu kategori
     public function category()
     {
         return $this->belongsTo(Category::class);
+    }
+
+    // TAMBAHKAN RELASI INI
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, 'unit_id');
     }
 }
