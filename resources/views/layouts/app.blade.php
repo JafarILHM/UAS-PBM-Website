@@ -13,7 +13,6 @@
     <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
     <style>
-        /* Sedikit perbaikan agar tabel lebih rapi */
         .sidebar-item.active .sidebar-link:hover { background: rgba(255, 255, 255, 0.087); }
     </style>
 </head>
@@ -48,9 +47,11 @@
                     <li class="sidebar-header">Master Data</li>
 
                     <li class="sidebar-item {{ request()->is('items*') ? 'active' : '' }}">
-                        <a class="sidebar-link" href="#"> <i class="align-middle" data-feather="package"></i> <span class="align-middle">Data Barang</span>
+                        <a class="sidebar-link" href="{{ route('items.index') }}">
+                            <i class="align-middle" data-feather="package"></i> <span class="align-middle">Data Barang</span>
                         </a>
                     </li>
+
                     <li class="sidebar-item {{ request()->is('categories*') ? 'active' : '' }}">
                         <a class="sidebar-link" href="{{ route('categories.index') }}">
                             <i class="align-middle" data-feather="grid"></i> <span class="align-middle">Kategori</span>
