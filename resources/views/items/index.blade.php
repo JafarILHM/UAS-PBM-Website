@@ -10,9 +10,13 @@
         @endif
 
         <div class="card">
-            <div class="card-header">
+            <div class="card-header d-flex justify-content-between">
                 <a href="{{ route('items.create') }}" class="btn btn-primary">
                     <i data-feather="plus"></i> Tambah Barang Baru
+                </a>
+
+                <a href="{{ route('items.export') }}" class="btn btn-success">
+                    <i data-feather="download"></i> Export Excel
                 </a>
             </div>
             <div class="card-body">
