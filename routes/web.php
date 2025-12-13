@@ -27,6 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::resource('users', \App\Http\Controllers\UserController::class);
+    
+    // Master Data
+    Route::resource('categories', \App\Http\Controllers\CategoryController::class);
+    Route::resource('units', \App\Http\Controllers\UnitController::class);
+    Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
