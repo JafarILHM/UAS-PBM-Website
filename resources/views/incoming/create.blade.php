@@ -15,7 +15,7 @@
                         <input class="form-control" list="datalistOptions" id="itemSearch" placeholder="Cari kode atau nama barang..." required onchange="fillItemID()">
                         <datalist id="datalistOptions">
                             @foreach ($items as $item)
-                                <option value="{{ $item->sku }}" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-unit="{{ $item->unit }}">
+                                <option value="{{ $item->sku }}" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-unit="Unit">
                                     {{ $item->name }}
                                 </option>
                             @endforeach
@@ -41,7 +41,7 @@
                             <label class="form-label">Jumlah Masuk</label>
                             <div class="input-group">
                                 <input type="number" name="quantity" class="form-control" min="1" required>
-                                <span class="input-group-text" id="unitDisplay">Pcs</span>
+                                <span class="input-group-text" id="unitDisplay">Unit</span>
                             </div>
                         </div>
                     </div>
@@ -72,7 +72,6 @@
 </div>
 
 <script>
-    // Script sederhana untuk mengambil ID barang saat user memilih dari datalist
     function fillItemID() {
         var input = document.getElementById('itemSearch');
         var list = document.getElementById('datalistOptions');
@@ -91,7 +90,6 @@
                 return;
             }
         }
-        // Jika tidak ketemu (user ketik sembarangan)
         hiddenId.value = '';
         display.style.display = 'none';
     }
