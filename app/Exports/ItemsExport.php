@@ -5,35 +5,45 @@ namespace App\Exports;
 use App\Models\Item;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
 
-class ItemsExport implements FromCollection, WithHeadings
+class ItemsExport implements FromCollection, WithHeadings, WithMapping
 {
     /**
-    * @return \Illuminate\Support\Collection
+    * Ambil data dari database
     */
     public function collection()
     {
-        return Item::all();
+        return Item::with(['category', 'unit'])->get();
     }
 
     /**
-     * @return array
+     * Judul Kolom di Excel (Header)
      */
     public function headings(): array
     {
         return [
-            'ID',
             'SKU',
-            'Barcode Base64',
-            'Name',
-            'Description',
-            'Price',
-            'Stock',
-            'Category ID',
-            'Supplier ID',
-            'Unit ID',
-            'Created At',
-            'Updated At',
+            'Nama Barang',
+            'Kategori',
+            'Stok Saat Ini',
+            'Satuan',
+            'Stok Minimum',
+        ];
+    }
+
+    /**
+     * Data yang akan dimasukkan ke baris Excel
+     */
+    public function map($item): array
+    {
+        return [
+            $item->sku,
+            $item->name,
+            $item->category->name ?? '-',
+            $item->stock,
+            $item->unit->name ?? '-',
+            $item->stock_minimum,
         ];
     }
 }

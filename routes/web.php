@@ -32,9 +32,21 @@ Route::middleware('auth')->group(function () {
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::resource('units', \App\Http\Controllers\UnitController::class);
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
-    Route::resource('items', \App\Http\Controllers\ItemController::class);
+    Route::resource('items', \App\Http\Controllers\ItemController::class)->except(['show']);
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
 
+<<<<<<< Updated upstream
+=======
+
+    // Transaksi Barang Masuk dan keluar
+    Route::resource('incoming', \App\Http\Controllers\IncomingItemController::class);
+    Route::resource('outgoing', \App\Http\Controllers\OutgoingItemController::class);
+
+    // Route Export Excel (Taruh SEBELUM resource items)
+    Route::get('items/export', [\App\Http\Controllers\ItemController::class, 'export'])->name('items.export');
+    Route::resource('items', \App\Http\Controllers\ItemController::class);
+
+>>>>>>> Stashed changes
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 

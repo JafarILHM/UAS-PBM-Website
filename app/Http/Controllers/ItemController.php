@@ -7,6 +7,8 @@ use App\Models\Category;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Exports\ItemsExport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class ItemController extends Controller
 {
@@ -18,6 +20,14 @@ class ItemController extends Controller
         // Ambil data barang beserta nama kategorinya
         $items = Item::with('category')->latest()->get();
         return view('items.index', compact('items'));
+    }
+
+    /**
+     * Download Laporan Excel
+     */
+    public function export()
+    {
+        return Excel::download(new ItemsExport, 'laporan-stok-barang.xlsx');
     }
 
     /**
@@ -48,6 +58,7 @@ class ItemController extends Controller
 
         // Jika barcode kosong, samakan dengan SKU
         $barcode = $request->barcode ?? $request->sku;
+
 
         Item::create([
             'sku' => $request->sku,
