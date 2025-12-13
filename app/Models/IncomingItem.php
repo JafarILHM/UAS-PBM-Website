@@ -9,32 +9,23 @@ class IncomingItem extends Model
 {
     use HasFactory;
 
+    // Sesuaikan dengan migrasi database kamu
     protected $fillable = [
         'item_id',
-        'item_batch_id',
+        'operator_id', 
+        'supplier_id',
         'qty',
-        'operator_id',
+        'batch',
+        'production_date',
         'date_in',
         'deadline',
     ];
 
-    protected $casts = [
-        'date_in' => 'date',
-        'deadline' => 'date',
-    ];
+    public function item() { return $this->belongsTo(Item::class); }
+    public function supplier() { return $this->belongsTo(Supplier::class); }
 
-    public function item()
-    {
-        return $this->belongsTo(Item::class);
-    }
-
-    public function itemBatch()
-    {
-        return $this->belongsTo(ItemBatch::class);
-    }
-
-    public function operator()
-    {
+    // Relasi ke User tapi nama kolom foreign key-nya 'operator_id'
+    public function user() {
         return $this->belongsTo(User::class, 'operator_id');
     }
 }

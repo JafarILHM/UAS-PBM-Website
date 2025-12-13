@@ -11,29 +11,15 @@ class OutgoingItem extends Model
 
     protected $fillable = [
         'item_id',
-        'item_batch_id',
+        'operator_id', 
         'qty',
-        'operator_id',
         'purpose',
         'date_out',
     ];
 
-    protected $casts = [
-        'date_out' => 'date',
-    ];
+    public function item() { return $this->belongsTo(Item::class); }
 
-    public function item()
-    {
-        return $this->belongsTo(Item::class);
-    }
-
-    public function itemBatch()
-    {
-        return $this->belongsTo(ItemBatch::class);
-    }
-
-    public function operator()
-    {
+    public function user() {
         return $this->belongsTo(User::class, 'operator_id');
     }
 }
