@@ -32,6 +32,8 @@ Route::middleware('auth')->group(function () {
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::resource('units', \App\Http\Controllers\UnitController::class);
     Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
+    Route::resource('items', \App\Http\Controllers\ItemController::class);
+    Route::resource('suppliers', \App\Http\Controllers\SupplierController::class);
 
 
     // Transaksi Barang Masuk dan keluar
