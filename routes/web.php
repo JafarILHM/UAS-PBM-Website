@@ -26,6 +26,7 @@ Route::middleware('auth')->group(function () {
     // Dashboard Utama
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::resource('users', \App\Http\Controllers\UserController::class);
 
     // Logout
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
