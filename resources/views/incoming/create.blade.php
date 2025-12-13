@@ -15,8 +15,10 @@
                         <input class="form-control" list="datalistOptions" id="itemSearch" placeholder="Cari kode atau nama barang..." required onchange="fillItemID()">
                         <datalist id="datalistOptions">
                             @foreach ($items as $item)
-                                <option value="{{ $item->sku }}" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-unit="Unit">
-                                    {{ $item->name }}
+                                <option value="{{ $item->sku }}"
+                                    data-id="{{ $item->id }}"
+                                    data-name="{{ $item->name }}"
+                                    data-unit="{{ $item->unit->symbol ?? 'Unit' }}"> {{ $item->name }}
                                 </option>
                             @endforeach
                         </datalist>
