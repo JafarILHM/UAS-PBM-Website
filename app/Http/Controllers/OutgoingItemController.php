@@ -17,7 +17,6 @@ class OutgoingItemController extends Controller
 
     public function create()
     {
-        // PERBAIKAN: Tambahkan with('unit') dan select 'unit_id'
         $items = Item::with('unit')
             ->where('stock', '>', 0)
             ->select('id', 'name', 'sku', 'stock', 'unit_id')
@@ -43,10 +42,10 @@ class OutgoingItemController extends Controller
         DB::transaction(function () use ($request, $item) {
             OutgoingItem::create([
                 'item_id' => $request->item_id,
-                'user_id' => auth()->id(),
-                'qty' => $request->quantity, // Pastikan sesuai nama kolom di DB (qty)
-                'notes' => $request->notes,
-                'date_out' => now(), // Sesuai kolom di migrasi
+                'operator_id' => auth()->id(),
+                'qty' => $request->quantity,
+                'purpose' => $request->notes,
+                'date_out' => now(),
             ]);
 
             $item->stock -= $request->quantity;

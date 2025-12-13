@@ -21,7 +21,7 @@ class IncomingItemController extends Controller
     {
         $suppliers = Supplier::all();
 
-        // PERBAIKAN: Tambahkan with('unit') dan select 'unit_id'
+        //  Tambahkan with('unit') dan select 'unit_id'
         $items = Item::with('unit')
             ->select('id', 'name', 'sku', 'unit_id')
             ->get();
@@ -31,12 +31,14 @@ class IncomingItemController extends Controller
 
     public function store(Request $request)
     {
-        $request->validate([
-            'item_id' => 'required|exists:items,id',
-            'supplier_id' => 'required|exists:suppliers,id',
-            'quantity' => 'required|integer|min:1',
-            'batch_no' => 'nullable|string',
-            'expiry_date' => 'nullable|date',
+        IncomingItem::create([
+            'item_id' => $request->item_id,
+            'operator_id' => auth()->id(),
+            'supplier_id' => $request->supplier_id,
+            'qty' => $request->quantity,
+            'batch' => $request->batch_no,
+            'deadline' => $request->expiry_date,
+            'date_in' => now(),
         ]);
 
         DB::transaction(function () use ($request) {
