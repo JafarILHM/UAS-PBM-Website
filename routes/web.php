@@ -27,7 +27,11 @@ Route::middleware('auth')->group(function () {
     Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/dashboard', [DashboardController::class, 'index']);
     Route::resource('users', \App\Http\Controllers\UserController::class);
-    
+
+    // Route untuk Halaman Profil (Self Service)
+    Route::get('/profile', [\App\Http\Controllers\ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile', [\App\Http\Controllers\ProfileController::class, 'update'])->name('profile.update');
+
     // Master Data
     Route::resource('categories', \App\Http\Controllers\CategoryController::class);
     Route::resource('units', \App\Http\Controllers\UnitController::class);
@@ -48,7 +52,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
     // Route Template AdminKit (Opsional: Nanti bisa dihapus jika fitur sudah jadi)
-    Route::get('/profile', function () { return view('pages-profile'); });
+    // Route::get('/profile', function () { return view('pages-profile'); });
     Route::get('/blank', function () { return view('pages-blank'); });
     Route::get('/ui-buttons', function () { return view('ui-buttons'); });
     Route::get('/ui-forms', function () { return view('ui-forms'); });
