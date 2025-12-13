@@ -14,104 +14,47 @@
 
         <div class="card">
             <div class="card-header">
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addSupplierModal">
+                <a href="{{ route('suppliers.create') }}" class="btn btn-primary">
                     <i data-feather="plus"></i> Tambah Supplier Baru
-                </button>
+                </a>
             </div>
 
-            <div class="table-responsive">
-                <table class="table table-hover my-0">
-                    <thead>
-                        <tr>
-                            <th>Nama Supplier</th>
-                            <th>Kontak / No. Telp</th>
-                            <th>Alamat</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @foreach ($suppliers as $supplier)
-                        <tr>
-                            <td><strong>{{ $supplier->name }}</strong></td>
-                            <td>{{ $supplier->contact ?? '-' }}</td>
-                            <td>{{ $supplier->address ?? '-' }}</td>
-                            <td>
-                                <button class="btn btn-sm btn-info me-1" data-bs-toggle="modal" data-bs-target="#editSupplierModal{{ $supplier->id }}">
-                                    Edit
-                                </button>
-                                <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus supplier ini?');">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="btn btn-sm btn-danger">Hapus</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <div class="modal fade" id="editSupplierModal{{ $supplier->id }}" tabindex="-1" aria-hidden="true">
-                            <div class="modal-dialog">
-                                <div class="modal-content">
-                                    <form action="{{ route('suppliers.update', $supplier->id) }}" method="POST">
-                                        @csrf @method('PUT')
-                                        <div class="modal-header">
-                                            <h5 class="modal-title">Edit Supplier</h5>
-                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div class="modal-body">
-                                            <div class="mb-3">
-                                                <label class="form-label">Nama Supplier</label>
-                                                <input type="text" name="name" class="form-control" value="{{ $supplier->name }}" required>
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Kontak (HP/Telp)</label>
-                                                <input type="text" name="contact" class="form-control" value="{{ $supplier->contact }}">
-                                            </div>
-                                            <div class="mb-3">
-                                                <label class="form-label">Alamat</label>
-                                                <textarea name="address" class="form-control" rows="2">{{ $supplier->address }}</textarea>
-                                            </div>
-                                        </div>
-                                        <div class="modal-footer">
-                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                                            <button type="submit" class="btn btn-primary">Update</button>
-                                        </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nama Supplier</th>
+                                <th>Kontak</th>
+                                <th>Alamat</th>
+                                <th class="text-end">Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($suppliers as $supplier)
+                            <tr>
+                                <td><strong>{{ $supplier->name }}</strong></td>
+                                <td>{{ $supplier->contact ?? '-' }}</td>
+                                <td>{{ Str::limit($supplier->address, 50) }}</td>
+                                <td class="text-end">
+                                    <a href="{{ route('suppliers.edit', $supplier->id) }}" class="btn btn-sm btn-info">
+                                        <i data-feather="edit"></i> Edit
+                                    </a>
+
+                                    <form action="{{ route('suppliers.destroy', $supplier->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus supplier ini?');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i data-feather="trash-2"></i> Hapus
+                                        </button>
                                     </form>
-                                </div>
-                            </div>
-                        </div>
-                        @endforeach
-                    </tbody>
-                </table>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="addSupplierModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <form action="{{ route('suppliers.store') }}" method="POST">
-                @csrf
-                <div class="modal-header">
-                    <h5 class="modal-title">Tambah Supplier Baru</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Nama Supplier</label>
-                        <input type="text" name="name" class="form-control" placeholder="PT. Maju Jaya" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Kontak (HP/Telp)</label>
-                        <input type="text" name="contact" class="form-control" placeholder="0812...">
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">Alamat</label>
-                        <textarea name="address" class="form-control" rows="2" placeholder="Jl. Raya..."></textarea>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan</button>
-                </div>
-            </form>
         </div>
     </div>
 </div>

@@ -7,31 +7,53 @@ use Illuminate\Http\Request;
 
 class UnitController extends Controller
 {
-    public function index() {
+    public function index()
+    {
         $units = Unit::latest()->get();
         return view('units.index', compact('units'));
     }
 
-    public function store(Request $request) {
+    // HALAMAN TAMBAH
+    public function create()
+    {
+        return view('units.create');
+    }
+
+    // PROSES SIMPAN
+    public function store(Request $request)
+    {
         $request->validate([
-            'name' => 'required|unique:units',
-            'symbol' => 'required|unique:units'
+            'name' => 'required|string|max:50',
+            'symbol' => 'required|string|max:10',
         ]);
+
         Unit::create($request->all());
-        return back()->with('success', 'Satuan berhasil ditambahkan');
+
+        return redirect()->route('units.index')->with('success', 'Satuan berhasil ditambahkan');
     }
 
-    public function update(Request $request, Unit $unit) {
+    // HALAMAN EDIT
+    public function edit(Unit $unit)
+    {
+        return view('units.edit', compact('unit'));
+    }
+
+    // PROSES UPDATE
+    public function update(Request $request, Unit $unit)
+    {
         $request->validate([
-            'name' => 'required|unique:units,name,'.$unit->id,
-            'symbol' => 'required|unique:units,symbol,'.$unit->id
+            'name' => 'required|string|max:50',
+            'symbol' => 'required|string|max:10',
         ]);
+
         $unit->update($request->all());
-        return back()->with('success', 'Satuan berhasil diperbarui');
+
+        return redirect()->route('units.index')->with('success', 'Satuan berhasil diperbarui');
     }
 
-    public function destroy(Unit $unit) {
+    public function destroy(Unit $unit)
+    {
         $unit->delete();
-        return back()->with('success', 'Satuan berhasil dihapus');
+        return redirect()->route('units.index')->with('success', 'Satuan berhasil dihapus');
     }
 }

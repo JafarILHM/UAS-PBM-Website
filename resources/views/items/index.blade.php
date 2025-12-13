@@ -6,7 +6,10 @@
 <div class="row">
     <div class="col-12">
         @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
         @endif
 
         <div class="card">
@@ -19,45 +22,50 @@
                     <i data-feather="download"></i> Export Excel
                 </a>
             </div>
+
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-striped table-hover">
+                    <table class="table table-striped table-hover align-middle">
                         <thead>
                             <tr>
-                                <th>SKU / Barcode</th>
-                                <th>Nama Barang</th>
+                                <th>SKU / Barcode</th> <th>Nama Barang</th>
                                 <th>Kategori</th>
                                 <th>Stok</th>
                                 <th>Satuan</th>
-                                <th>Aksi</th>
+                                <th class="text-end">Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
                             @foreach ($items as $item)
                             <tr>
                                 <td>
-                                    <strong>{{ $item->sku }}</strong><br>
-                                    <small class="text-muted">{{ $item->barcode }}</small>
+                                    <strong>{{ $item->sku }}</strong>
                                     <div class="mt-1">
-                                        {!! DNS1D::getBarcodeHTML($item->barcode, 'C128', 1, 25) !!}
+                                        {!! DNS1D::getBarcodeHTML($item->sku, 'C128', 1, 25) !!}
                                     </div>
                                 </td>
                                 <td>{{ $item->name }}</td>
-                                <td>{{ $item->category->name ?? '-' }}</td>
                                 <td>
-                                    @if($item->stock <= $item->stock_minimum)
-                                        <span class="text-danger fw-bold">{{ $item->stock }}</span>
-                                        <i data-feather="alert-circle" class="text-danger" width="14"></i>
-                                    @else
-                                        {{ $item->stock }}
-                                    @endif
+                                    <span class="badge bg-secondary">{{ $item->category->name ?? '-' }}</span>
                                 </td>
-                                <td>{{ $item->unit }}</td>
                                 <td>
-                                    <a href="{{ route('items.edit', $item->id) }}" class="btn btn-sm btn-info">Edit</a>
-                                    <form action="{{ route('items.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus barang ini?')">
-                                        @csrf @method('DELETE')
-                                        <button class="btn btn-sm btn-danger">Hapus</button>
+                                    <span class="{{ $item->stock <= $item->stock_minimum ? 'text-danger fw-bold' : 'text-success fw-bold' }}">
+                                        {{ $item->stock }}
+                                    </span>
+                                </td>
+                                <td>{{ $item->unit->symbol ?? '-' }}</td>
+
+                                <td class="text-end">
+                                    <a href="{{ route('items.edit', $item->id) }}" class="btn btn-sm btn-info me-1">
+                                        <i data-feather="edit"></i> Edit
+                                    </a>
+
+                                    <form action="{{ route('items.destroy', $item->id) }}" method="POST" class="d-inline" onsubmit="return confirm('Yakin hapus barang ini? Stok dan riwayat transaksi juga akan terhapus.');">
+                                        @csrf
+                                        @method('DELETE')
+                                        <button type="submit" class="btn btn-sm btn-danger">
+                                            <i data-feather="trash-2"></i> Hapus
+                                        </button>
                                     </form>
                                 </td>
                             </tr>
