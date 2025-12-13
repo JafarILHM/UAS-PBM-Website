@@ -9,49 +9,22 @@ class Item extends Model
 {
     use HasFactory;
 
+    // Kolom yang boleh diisi
     protected $fillable = [
         'sku',
         'barcode',
         'name',
+        'description',
+        'category_id',
+        'unit',
         'stock',
         'stock_minimum',
-        'supplier_id',
-        'category_id',
-        'unit_id',
+        'image'
     ];
 
-    public function supplier()
-    {
-        return $this->belongsTo(Supplier::class);
-    }
-
+    // Relasi: Satu barang milik satu kategori
     public function category()
     {
         return $this->belongsTo(Category::class);
-    }
-
-    public function unit()
-    {
-        return $this->belongsTo(Unit::class);
-    }
-
-    public function itemBatches()
-    {
-        return $this->hasMany(ItemBatch::class);
-    }
-
-    public function incomingItems()
-    {
-        return $this->hasMany(IncomingItem::class);
-    }
-
-    public function outgoingItems()
-    {
-        return $this->hasMany(OutgoingItem::class);
-    }
-
-    public function stockReservations()
-    {
-        return $this->hasMany(StockReservation::class);
     }
 }
