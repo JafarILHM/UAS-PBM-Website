@@ -1,55 +1,43 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
 
-Route::get('/login', function () {
-    return response()->json(['message' => 'Login route dummy.'], 200);
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider and all of them will
+| be assigned to the "web" middleware group. Make something great!
+|
+*/
+
+// --- GROUP GUEST: Hanya bisa diakses jika BELUM login ---
+Route::middleware('guest')->group(function () {
+    Route::get('/login', [AuthController::class, 'index'])->name('login');
+    Route::post('/login', [AuthController::class, 'login'])->name('login.action');
 });
 
-Route::get('/', function () {
-    return view('index');
-});
+// --- GROUP AUTH: Hanya bisa diakses jika SUDAH login ---
+Route::middleware('auth')->group(function () {
+    // Dashboard Utama
+    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
-Route::get('/charts-chartjs', function () {
-    return view('charts-chartjs');
-});
+    // Logout
+    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('/icons-feather', function () {
-    return view('icons-feather');
-});
-
-Route::get('/maps-google', function () {
-    return view('maps-google');
-});
-
-Route::get('/pages-blank', function () {
-    return view('pages-blank');
-});
-
-Route::get('/pages-profile', function () {
-    return view('pages-profile');
-});
-
-Route::get('/pages-sign-in', function () {
-    return view('pages-sign-in');
-});
-
-Route::get('/pages-sign-up', function () {
-    return view('pages-sign-up');
-});
-
-Route::get('/ui-buttons', function () {
-    return view('ui-buttons');
-});
-
-Route::get('/ui-cards', function () {
-    return view('ui-cards');
-});
-
-Route::get('/ui-forms', function () {
-    return view('ui-forms');
-});
-
-Route::get('/ui-typography', function () {
-    return view('ui-typography');
+    // Route Template AdminKit (Opsional: Nanti bisa dihapus jika fitur sudah jadi)
+    Route::get('/profile', function () { return view('pages-profile'); });
+    Route::get('/blank', function () { return view('pages-blank'); });
+    Route::get('/ui-buttons', function () { return view('ui-buttons'); });
+    Route::get('/ui-forms', function () { return view('ui-forms'); });
+    Route::get('/ui-cards', function () { return view('ui-cards'); });
+    Route::get('/ui-typography', function () { return view('ui-typography'); });
+    Route::get('/icons-feather', function () { return view('icons-feather'); });
+    Route::get('/charts-chartjs', function () { return view('charts-chartjs'); });
+    Route::get('/maps-google', function () { return view('maps-google'); });
 });
