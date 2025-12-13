@@ -47,8 +47,7 @@
                     <li class="sidebar-header">Master Data</li>
 
                     <li class="sidebar-item {{ request()->is('items*') ? 'active' : '' }}">
-                        <a class="sidebar-link" href="{{ route('items.index') }}">
-                            <i class="align-middle" data-feather="package"></i> <span class="align-middle">Data Barang</span>
+                        <a class="sidebar-link" href="{{ route('items.index') }}"> <i class="align-middle" data-feather="package"></i> <span class="align-middle">Data Barang</span>
                         </a>
                     </li>
 
