@@ -70,13 +70,14 @@
 
                     <li class="sidebar-header">Transaksi</li>
 
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="#">
+                    <li class="sidebar-item {{ request()->is('incoming*') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('incoming.index') }}">
                             <i class="align-middle" data-feather="arrow-down-circle"></i> <span class="align-middle">Barang Masuk</span>
                         </a>
                     </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="#">
+
+                    <li class="sidebar-item {{ request()->is('outgoing*') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('outgoing.index') }}">
                             <i class="align-middle" data-feather="arrow-up-circle"></i> <span class="align-middle">Barang Keluar</span>
                         </a>
                     </li>
