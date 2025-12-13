@@ -5,13 +5,14 @@
 <div class="row">
     <div class="col-12">
         @if(session('success'))
-            <div class="alert alert-success">{{ session('success') }}</div>
+            <div class="alert alert-success alert-dismissible fade show">{{ session('success') }}</div>
         @endif
         <div class="card">
             <div class="card-header">
                 <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addModal">Tambah Satuan</button>
             </div>
-            <div class="card-body">
+
+            <div class="table-responsive">
                 <table class="table table-hover my-0">
                     <thead><tr><th>Nama</th><th>Simbol</th><th>Aksi</th></tr></thead>
                     <tbody>
