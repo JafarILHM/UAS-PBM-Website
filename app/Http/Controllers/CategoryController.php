@@ -4,44 +4,32 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
     public function index()
     {
-        $categories = Category::paginate(10);
-        return response()->json($categories);
+        $categories = Category::latest()->get();
+        return view('categories.index', compact('categories'));
     }
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name',
-        ]);
-
-        $category = Category::create($validated);
-        return response()->json($category, 201);
-    }
-
-    public function show(Category $category)
-    {
-        return response()->json($category->load('items'));
+        $request->validate(['name' => 'required|string|max:255']);
+        Category::create($request->all());
+        return back()->with('success', 'Kategori berhasil ditambahkan');
     }
 
     public function update(Request $request, Category $category)
     {
-        $validated = $request->validate([
-            'name' => ['required', 'string', 'max:255', Rule::unique('categories')->ignore($category->id)],
-        ]);
-
-        $category->update($validated);
-        return response()->json($category);
+        $request->validate(['name' => 'required|string|max:255']);
+        $category->update($request->all());
+        return back()->with('success', 'Kategori berhasil diperbarui');
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
-        return response()->json(null, 204);
+        return back()->with('success', 'Kategori berhasil dihapus');
     }
 }

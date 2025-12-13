@@ -29,7 +29,7 @@
                 <ul class="sidebar-nav">
                     <li class="sidebar-header">Utama</li>
 
-                    <li class="sidebar-item {{ request()->is('dashboard') ? 'active' : '' }}">
+                    <li class="sidebar-item {{ request()->is('dashboard') || request()->is('/') ? 'active' : '' }}">
                         <a class="sidebar-link" href="{{ route('dashboard') }}">
                             <i class="align-middle" data-feather="sliders"></i> <span class="align-middle">Dashboard</span>
                         </a>
@@ -48,17 +48,21 @@
                     <li class="sidebar-header">Master Data</li>
 
                     <li class="sidebar-item {{ request()->is('items*') ? 'active' : '' }}">
-                        <a class="sidebar-link" href="#">
-                            <i class="align-middle" data-feather="package"></i> <span class="align-middle">Data Barang</span>
+                        <a class="sidebar-link" href="#"> <i class="align-middle" data-feather="package"></i> <span class="align-middle">Data Barang</span>
                         </a>
                     </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="#">
+                    <li class="sidebar-item {{ request()->is('categories*') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('categories.index') }}">
                             <i class="align-middle" data-feather="grid"></i> <span class="align-middle">Kategori</span>
                         </a>
                     </li>
-                    <li class="sidebar-item">
-                        <a class="sidebar-link" href="#">
+                    <li class="sidebar-item {{ request()->is('units*') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('units.index') }}">
+                            <i class="align-middle" data-feather="check-square"></i> <span class="align-middle">Satuan</span>
+                        </a>
+                    </li>
+                    <li class="sidebar-item {{ request()->is('suppliers*') ? 'active' : '' }}">
+                        <a class="sidebar-link" href="{{ route('suppliers.index') }}">
                             <i class="align-middle" data-feather="truck"></i> <span class="align-middle">Supplier</span>
                         </a>
                     </li>
