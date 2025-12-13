@@ -25,7 +25,7 @@
                         <input class="form-control" list="datalistOptions" id="itemSearch" placeholder="Cari kode atau nama barang..." required onchange="fillItemInfo()">
                         <datalist id="datalistOptions">
                             @foreach ($items as $item)
-                                <option value="{{ $item->sku }}" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-unit="{{ $item->unit }}" data-stock="{{ $item->stock }}">
+                                <option value="{{ $item->sku }}" data-id="{{ $item->id }}" data-name="{{ $item->name }}" data-unit="Unit" data-stock="{{ $item->stock }}">
                                     {{ $item->name }} (Sisa: {{ $item->stock }})
                                 </option>
                             @endforeach

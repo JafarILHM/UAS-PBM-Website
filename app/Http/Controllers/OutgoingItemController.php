@@ -9,25 +9,22 @@ use Illuminate\Support\Facades\DB;
 
 class OutgoingItemController extends Controller
 {
-    // Tampilkan Riwayat Barang Keluar
     public function index()
     {
         $outgoingItems = OutgoingItem::with(['item', 'user'])->latest()->get();
         return view('outgoing.index', compact('outgoingItems'));
     }
 
-    // Form Input Barang Keluar
     public function create()
     {
-        // Ambil barang yang stoknya > 0 saja
+        // PERBAIKAN: Menghapus 'unit' dari select
         $items = Item::where('stock', '>', 0)
-                     ->select('id', 'name', 'sku', 'unit', 'stock')
+                     ->select('id', 'name', 'sku', 'stock')
                      ->get();
 
         return view('outgoing.create', compact('items'));
     }
 
-    // Proses Simpan (Kurangi Stok)
     public function store(Request $request)
     {
         $request->validate([
@@ -38,28 +35,21 @@ class OutgoingItemController extends Controller
 
         $item = Item::findOrFail($request->item_id);
 
-        // Validasi: Cek apakah stok cukup?
         if ($item->stock < $request->quantity) {
-            return back()->withErrors(['quantity' => "Stok tidak cukup! Sisa stok hanya: {$item->stock} {$item->unit}"])->withInput();
+            return back()->withErrors(['quantity' => "Stok tidak cukup! Sisa stok hanya: {$item->stock}"])->withInput();
         }
 
-        // Gunakan DB Transaction
         DB::transaction(function () use ($request, $item) {
-            // 1. Simpan Riwayat Keluar
             OutgoingItem::create([
                 'item_id' => $request->item_id,
                 'user_id' => auth()->id(),
-                'quantity' => $request->quantity,
+                'qty' => $request->quantity, // Pastikan sesuai nama kolom di DB (qty)
                 'notes' => $request->notes,
-                'transaction_date' => now(),
+                'date_out' => now(), // Sesuai kolom di migrasi
             ]);
 
-            // 2. Kurangi Stok Master
             $item->stock -= $request->quantity;
             $item->save();
-
-            // Catatan: Jika menggunakan batch (FIFO/LIFO), logika pengurangan batch bisa ditambahkan di sini.
-            // Untuk versi dasar, kita kurangi stok total saja dulu.
         });
 
         return redirect()->route('outgoing.index')->with('success', 'Barang berhasil dikeluarkan!');
