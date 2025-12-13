@@ -2,87 +2,56 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
-use Illuminate\Validation\ValidationException;
 
 class AuthController extends Controller
 {
-
-    public function register(Request $request)
+    /**
+     * Menampilkan halaman login.
+     */
+    public function index()
     {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => 'required|string|confirmed|min:8',
-            'role' => 'required|string|in:operator,admin',
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'role' => $request->role,
-        ]);
-
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ], 201);
+        return view('pages-sign-in');
     }
 
+    /**
+     * Memproses data login yang dikirimkan form.
+     */
     public function login(Request $request)
     {
+        // 1. Validasi input
         $request->validate([
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
-        $user = User::where('email', $request->email)->first();
+        // 2. Ambil hanya email dan password
+        $credentials = $request->only('email', 'password');
 
-        if (! $user || ! Hash::check($request->password, $user->password)) {
-            throw ValidationException::withMessages([
-                'email' => ['The provided credentials are incorrect.'],
-            ]);
+        // 3. Coba login (Attempt)
+        if (Auth::attempt($credentials)) {
+            $request->session()->regenerate();
+
+            // Login sukses, arahkan ke dashboard
+            return redirect()->intended('/dashboard');
         }
 
-        $token = $user->createToken('auth_token')->plainTextToken;
-
-        return response()->json([
-            'user' => $user,
-            'token' => $token,
-        ]);
+        // 4. Jika gagal, kembalikan ke halaman login dengan pesan error
+        return back()->withErrors([
+            'email' => 'Email atau password yang Anda masukkan salah.',
+        ])->onlyInput('email');
     }
 
+    /**
+     * Memproses logout.
+     */
     public function logout(Request $request)
     {
-        $user = $request->user(); // ambil user dari request
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
-        if (!$user) {
-            return response()->json(['message' => 'Not authenticated.'], 401);
-        }
-
-        // pastikan user memiliki method currentAccessToken
-        if (method_exists($user, 'currentAccessToken')) {
-            $token = $user->currentAccessToken();
-            if ($token) {
-                $token->delete(); // hapus token
-                return response()->json(['message' => 'Logged out successfully']);
-            }
-        }
-
-        return response()->json(['message' => 'No token found or invalid request.'], 400);
-    }
-
-    public function user(Request $request)
-    {
-        if (Auth::check()) {
-            return response()->json($request->user());
-        }
-        return response()->json(['message' => 'Not authenticated.'], 401);
+        return redirect('/login');
     }
 }
