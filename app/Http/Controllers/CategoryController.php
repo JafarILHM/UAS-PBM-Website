@@ -13,23 +13,45 @@ class CategoryController extends Controller
         return view('categories.index', compact('categories'));
     }
 
-    public function store(Request $request)
+    // Menampilkan Halaman Tambah
+    public function create()
     {
-        $request->validate(['name' => 'required|string|max:255']);
-        Category::create($request->all());
-        return back()->with('success', 'Kategori berhasil ditambahkan');
+        return view('categories.create');
     }
 
+    // Proses Simpan
+    public function store(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name'
+        ]);
+
+        Category::create($request->all());
+
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil ditambahkan');
+    }
+
+    // Menampilkan Halaman Edit
+    public function edit(Category $category)
+    {
+        return view('categories.edit', compact('category'));
+    }
+
+    // Proses Update
     public function update(Request $request, Category $category)
     {
-        $request->validate(['name' => 'required|string|max:255']);
+        $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,'.$category->id
+        ]);
+
         $category->update($request->all());
-        return back()->with('success', 'Kategori berhasil diperbarui');
+
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil diperbarui');
     }
 
     public function destroy(Category $category)
     {
         $category->delete();
-        return back()->with('success', 'Kategori berhasil dihapus');
+        return redirect()->route('categories.index')->with('success', 'Kategori berhasil dihapus');
     }
 }
