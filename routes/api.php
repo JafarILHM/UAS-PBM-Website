@@ -1,70 +1,41 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AuditLogController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ItemBatchController;
-use App\Http\Controllers\ItemController;
-use App\Http\Controllers\StockReservationController;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\UnitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\ItemController;
+use App\Http\Controllers\Api\CategoryController;
+use App\Http\Controllers\Api\SupplierController;
+use App\Http\Controllers\Api\UnitController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
 */
 
-// Public routes
-Route::post('/register', [AuthController::class, 'register']);
+// Public routes (Login tidak butuh token)
 Route::post('/login', [AuthController::class, 'login']);
 
-// Protected routes (requires authentication)
+// Protected routes (Harus login & punya token)
 Route::middleware('auth:sanctum')->group(function () {
+
+    // Auth & User Profile
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/user', [AuthController::class, 'me']);
 
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index']);
-
+    // --- MASTER DATA
     // Items
-    Route::apiResource('items', ItemController::class);
-    Route::post('/items/incoming', [ItemController::class, 'incoming']);
-    Route::post('/items/outgoing', [ItemController::class, 'outgoing']);
-    Route::get('/items/export', [ItemController::class, 'export']);
-    Route::get('/items/{item}/barcode', [ItemController::class, 'showBarcode']);
-    Route::get('/items/scan/{code}', [ItemController::class, 'scan']);
-
-    // Suppliers
-    Route::apiResource('suppliers', SupplierController::class);
+    Route::get('/items', [ItemController::class, 'index']); // List Barang
+    Route::post('/items', [ItemController::class, 'store']); // Tambah Barang
+    Route::get('/items/{item}', [ItemController::class, 'show']); // Detail Barang
+    Route::put('/items/{item}', [ItemController::class, 'update']); // Edit Barang
+    Route::delete('/items/{item}', [ItemController::class, 'destroy']); // Hapus Barang
 
     // Categories
     Route::apiResource('categories', CategoryController::class);
 
-    // Units
+    // Suppliers
+    Route::apiResource('suppliers', SupplierController::class);
     Route::apiResource('units', UnitController::class);
-    Route::get('/unit-conversions', [UnitController::class, 'indexConversions']);
-    Route::post('/unit-conversions', [UnitController::class, 'storeConversion']);
-    Route::get('/unit-conversions/{unitConversion}', [UnitController::class, 'showConversion']);
-    Route::put('/unit-conversions/{unitConversion}', [UnitController::class, 'updateConversion']);
-    Route::delete('/unit-conversions/{unitConversion}', [UnitController::class, 'destroyConversion']);
-
-    // Item Batches
-    Route::apiResource('item-batches', ItemBatchController::class);
-
-    // Stock Reservations
-    Route::apiResource('stock-reservations', StockReservationController::class);
-    Route::post('/stock-reservations/{stockReservation}/fulfill', [StockReservationController::class, 'fulfill']);
-
-    // Audit Logs (read-only)
-    Route::get('/audit-logs', [AuditLogController::class, 'index']);
-    Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show']);
 });
