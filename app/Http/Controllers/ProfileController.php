@@ -30,21 +30,21 @@ class ProfileController extends Controller
             'email' => [
                 'required',
                 'email',
-                Rule::unique('users')->ignore($user->id), // Cek unik kecuali punya sendiri
+                Rule::unique('users')->ignore($user->id),
             ],
-            'password' => 'nullable|min:6|confirmed', // Confirmed butuh input name="password_confirmation"
+            'password' => 'nullable|min:6|confirmed',
         ]);
 
         // Update Data Dasar
         $user->name = $request->name;
         $user->email = $request->email;
 
-        // Update Password jika diisi
+        // Update Password
         if ($request->filled('password')) {
             $user->password = Hash::make($request->password);
         }
 
-        $user->save(); // Simpan perubahan
+        $user->save();
 
         return back()->with('success', 'Profil berhasil diperbarui!');
     }

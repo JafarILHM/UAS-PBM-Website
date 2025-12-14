@@ -20,8 +20,6 @@ class IncomingItemController extends Controller
     public function create()
     {
         $suppliers = Supplier::all();
-
-        //  Tambahkan with('unit') dan select 'unit_id'
         $items = Item::with('unit')
             ->select('id', 'name', 'sku', 'unit_id')
             ->get();
@@ -46,7 +44,7 @@ class IncomingItemController extends Controller
                 'item_id' => $request->item_id,
                 'user_id' => auth()->id(),
                 'supplier_id' => $request->supplier_id,
-                'qty' => $request->quantity, // Pastikan sesuai nama kolom di DB (qty)
+                'qty' => $request->quantity, 
                 'batch_no' => $request->batch_no,
                 'expiry_date' => $request->expiry_date,
                 'notes' => $request->notes,
