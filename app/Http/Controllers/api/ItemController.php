@@ -63,4 +63,24 @@ class ItemController extends Controller
             'message' => 'Barang dihapus'
         ]);
     }
+
+    /**
+     * Cari Barang berdasarkan SKU / Barcode (Untuk Fitur Scan di HP)
+     */
+    public function findBySku($sku)
+    {
+        $item = Item::with(['category', 'unit'])->where('sku', $sku)->first();
+
+        if (!$item) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Barang dengan kode tersebut tidak ditemukan.'
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $item
+        ]);
+    }
 }
