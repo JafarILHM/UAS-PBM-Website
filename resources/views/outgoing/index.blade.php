@@ -30,7 +30,7 @@
                             <small class="text-muted">{{ $out->item->sku ?? '' }}</small>
                         </td>
                         <td>
-                            <span class="badge bg-danger">- {{ $out->quantity }} {{ $out->item->unit ?? '' }}</span>
+                            <span class="badge bg-danger">- {{ $out->quantity }} {{ $out->item->unit->symbol ?? '' }}</span>
                         </td>
                         <td>{{ $out->notes ?? '-' }}</td>
                         <td>{{ $out->user->name ?? '-' }}</td>

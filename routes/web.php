@@ -1,15 +1,13 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-// --- 1. IMPORT CONTROLLER WEB (Pastikan BUKAN folder Api) ---
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UnitController;
-use App\Http\Controllers\ItemController; // Pastikan ini ItemController versi Web
+use App\Http\Controllers\ItemController; 
 use App\Http\Controllers\IncomingItemController;
 use App\Http\Controllers\OutgoingItemController;
 use App\Http\Controllers\ProfileController;
