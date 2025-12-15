@@ -10,6 +10,11 @@ class AuthController extends Controller
     // Tampilkan Halaman Login
     public function index()
     {
+        if (Auth::check()) {
+            return redirect()->route('dashboard');
+        }
+
+        // MENGGUNAKAN VIEW DI FOLDER AUTH
         return view('auth.login');
     }
 
@@ -23,11 +28,11 @@ class AuthController extends Controller
 
         if (Auth::attempt($credentials)) {
             $request->session()->regenerate();
-            return redirect()->intended('dashboard');
+            return redirect()->intended('dashboard')->with('success', 'Login Berhasil!');
         }
 
         return back()->withErrors([
-            'email' => 'Email atau password yang Anda masukkan salah.',
+            'email' => 'Email atau password salah.',
         ])->onlyInput('email');
     }
 
@@ -37,6 +42,6 @@ class AuthController extends Controller
         Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect('/login');
+        return redirect()->route('login');
     }
 }
