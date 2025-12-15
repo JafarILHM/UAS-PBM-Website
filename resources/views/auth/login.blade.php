@@ -31,7 +31,6 @@
                                     @if ($errors->any())
                                         <div class="alert alert-danger mb-4" role="alert">
                                             <div class="d-flex align-items-center">
-                                                <i data-feather="alert-circle" class="text-danger me-2"></i>
                                                 <div class="small">
                                                     @foreach ($errors->all() as $error)
                                                         <div>{{ $error }}</div>
@@ -41,17 +40,17 @@
                                         </div>
                                     @endif
 
-                                    <form action="{{ route('login') }}" method="POST">
+                                    <form action="{{ route('login.action') }}" method="POST">
                                         @csrf
 
                                         <div class="mb-3">
                                             <label class="form-label">Email</label>
-                                            <input class="form-control form-control-lg @error('email') is-invalid @enderror" type="email" name="email" placeholder="Masukkan email Anda" value="{{ old('email') }}" required autofocus />
+                                            <input class="form-control form-control-lg" type="email" name="email" placeholder="Masukkan email Anda" value="{{ old('email') }}" required autofocus />
                                         </div>
 
                                         <div class="mb-3">
                                             <label class="form-label">Password</label>
-                                            <input class="form-control form-control-lg @error('email') is-invalid @enderror" type="password" name="password" placeholder="Masukkan password Anda" required />
+                                            <input class="form-control form-control-lg" type="password" name="password" placeholder="Masukkan password Anda" required />
                                         </div>
 
                                         <div class="d-grid gap-2 mt-4">
@@ -69,8 +68,6 @@
             </div>
         </div>
     </main>
-
     <script src="{{ asset('assets/js/app.js') }}"></script>
 </body>
-
 </html>

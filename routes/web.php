@@ -1,57 +1,66 @@
 <?php
 
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-// Import Controller API
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\ItemController;
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\SupplierController;
-use App\Http\Controllers\Api\UnitController;
-use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\Api\IncomingItemController;
-use App\Http\Controllers\Api\OutgoingItemController;
-use App\Http\Controllers\Api\ProfileController;
+// --- 1. IMPORT CONTROLLER WEB (Pastikan BUKAN folder Api) ---
+use App\Http\Controllers\AuthController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\UnitController;
+use App\Http\Controllers\ItemController; // Pastikan ini ItemController versi Web
+use App\Http\Controllers\IncomingItemController;
+use App\Http\Controllers\OutgoingItemController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
-| Web Routes
+| Web Routes (Website Admin Panel)
 |--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "web" middleware group. Make something great!
-|
 */
 
-// Route Public
-Route::post('/login', [AuthController::class, 'login']);
+// --- PUBLIC ROUTES ---
+Route::get('/', function () {
+    return redirect()->route('login');
+});
 
-// Route Private (Perlu Token)
-Route::middleware('auth:sanctum')->group(function () {
+// Auth Routes
+Route::get('/login', [AuthController::class, 'index'])->name('login');
+Route::post('/login-action', [AuthController::class, 'login'])->name('login.action');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
 
-    // Auth & Profile
-    Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'me']);
-    Route::post('/profile/update', [ProfileController::class, 'update']);
 
+// --- PROTECTED ROUTES (Harus Login) ---
+Route::middleware(['auth'])->group(function () {
     // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index']);
-    // Master Data
-    Route::apiResource('items', ItemController::class);
-    Route::apiResource('categories', CategoryController::class);
-    Route::apiResource('suppliers', SupplierController::class);
-    Route::apiResource('units', UnitController::class);
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
-    // Transaksi
-    Route::post('/incoming', [IncomingItemController::class, 'store']);
-    Route::post('/outgoing', [OutgoingItemController::class, 'store']);
+    // --- MASTER DATA ---
+    // Data Barang (Items)
+    Route::get('items/export', [ItemController::class, 'export'])->name('items.export');
+    Route::resource('items', ItemController::class);
 
-    // Rute scan SKU
-    Route::get('/items/scan/{sku}', [ItemController::class, 'findBySku']);
+    // Master Data Lainnya
+    Route::resource('users', UserController::class);
+    Route::resource('categories', CategoryController::class);
+    Route::resource('suppliers', SupplierController::class);
+    Route::resource('units', UnitController::class);
 
-    Route::apiResource('items', ItemController::class);
+    // --- TRANSAKSI ---
+    // Barang Masuk
+    Route::get('/incoming', [IncomingItemController::class, 'index'])->name('incoming.index');
+    Route::get('/incoming/create', [IncomingItemController::class, 'create'])->name('incoming.create');
+    Route::post('/incoming', [IncomingItemController::class, 'store'])->name('incoming.store');
+
+    // Barang Keluar
+    Route::get('/outgoing', [OutgoingItemController::class, 'index'])->name('outgoing.index');
+    Route::get('/outgoing/create', [OutgoingItemController::class, 'create'])->name('outgoing.create');
+    Route::post('/outgoing', [OutgoingItemController::class, 'store'])->name('outgoing.store');
+
+    // --- PROFILE ---
+    Route::get('/profile', [ProfileController::class, 'index'])->name('profile.index');
+    Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');
 
     // Route Template AdminKit (Opsional: Nanti bisa dihapus jika fitur sudah jadi)
     // Route::get('/profile', function () { return view('pages-profile'); });
