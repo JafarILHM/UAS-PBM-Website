@@ -2,15 +2,15 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\DashboardController;
-use App\Http\Controllers\Api\ItemController;
-use App\Http\Controllers\Api\CategoryController;
-use App\Http\Controllers\Api\SupplierController;
-use App\Http\Controllers\Api\UnitController;
-use App\Http\Controllers\Api\IncomingItemController;
-use App\Http\Controllers\Api\OutgoingItemController;
-use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\DashboardController;
+use App\Http\Controllers\api\ItemController;
+use App\Http\Controllers\api\CategoryController;
+use App\Http\Controllers\api\SupplierController;
+use App\Http\Controllers\api\UnitController;
+use App\Http\Controllers\api\IncomingItemController;
+use App\Http\Controllers\api\OutgoingItemController;
+use App\Http\Controllers\api\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
