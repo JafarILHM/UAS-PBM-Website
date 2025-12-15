@@ -11,6 +11,7 @@ use App\Http\Controllers\api\UnitController;
 use App\Http\Controllers\api\IncomingItemController;
 use App\Http\Controllers\api\OutgoingItemController;
 use App\Http\Controllers\api\ProfileController;
+use App\Http\Controllers\api\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
@@ -32,6 +33,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // --- DASHBOARD ---
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/transactions', [TransactionController::class, 'index']);
 
     // --- MASTER DATA: BARANG (ITEMS) ---
     Route::get('/items/scan/{sku}', [ItemController::class, 'findBySku']);
