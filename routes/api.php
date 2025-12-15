@@ -3,39 +3,47 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
 use App\Http\Controllers\Api\ItemController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\SupplierController;
 use App\Http\Controllers\Api\UnitController;
+use App\Http\Controllers\Api\IncomingItemController;
+use App\Http\Controllers\Api\OutgoingItemController;
+use App\Http\Controllers\Api\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
+|
 */
 
-// Public routes (Login tidak butuh token)
+// PUBLIC ROUTES (Bisa diakses tanpa Login / Tanpa Token)
 Route::post('/login', [AuthController::class, 'login']);
 
-// Protected routes (Harus login & punya token)
+// PROTECTED ROUTES (Harus Login & Punya Token)
 Route::middleware('auth:sanctum')->group(function () {
 
-    // Auth & User Profile
+    // --- AUTHENTICATION & USER ---
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/user', [AuthController::class, 'me']);
+    Route::post('/profile/update', [ProfileController::class, 'update']);
 
-    // --- MASTER DATA
-    // Items
-    Route::get('/items', [ItemController::class, 'index']); // List Barang
-    Route::post('/items', [ItemController::class, 'store']); // Tambah Barang
-    Route::get('/items/{item}', [ItemController::class, 'show']); // Detail Barang
-    Route::put('/items/{item}', [ItemController::class, 'update']); // Edit Barang
-    Route::delete('/items/{item}', [ItemController::class, 'destroy']); // Hapus Barang
+    // --- DASHBOARD ---
+    Route::get('/dashboard', [DashboardController::class, 'index']);
 
-    // Categories
+    // --- MASTER DATA: BARANG (ITEMS) ---
+    Route::get('/items/scan/{sku}', [ItemController::class, 'findBySku']);
+    Route::apiResource('items', ItemController::class);
+
+    // --- MASTER DATA LAINNYA ---
     Route::apiResource('categories', CategoryController::class);
-
-    // Suppliers
     Route::apiResource('suppliers', SupplierController::class);
     Route::apiResource('units', UnitController::class);
+
+    // --- TRANSAKSI (Update Stok) ---
+    Route::post('/incoming', [IncomingItemController::class, 'store']);
+    Route::post('/outgoing', [OutgoingItemController::class, 'store']);
+
 });
