@@ -33,6 +33,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // --- DASHBOARD ---
     Route::get('/dashboard', [DashboardController::class, 'index']);
 
+    // --- MASTER DATA: USER ---
+    Route::apiResource('users', \App\Http\Controllers\api\UserController::class);
+
     // --- MASTER DATA: BARANG (ITEMS) ---
     Route::get('/items/scan/{sku}', [ItemController::class, 'findBySku']);
     Route::apiResource('items', ItemController::class);
