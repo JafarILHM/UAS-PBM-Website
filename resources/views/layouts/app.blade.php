@@ -8,7 +8,7 @@
     <meta name="description" content="Aplikasi Gudang & Inventory">
     <meta name="author" content="Kelompok Kami">
 
-    <title>Sistem Gudang - @yield('title', 'Admin')</title>
+    <title>Sistem Gudang - @yield('title', 'Panel')</title>
 
     <link href="{{ asset('assets/css/app.css') }}" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
@@ -47,7 +47,8 @@
                     <li class="sidebar-header">Master Data</li>
 
                     <li class="sidebar-item {{ request()->is('items*') ? 'active' : '' }}">
-                        <a class="sidebar-link" href="{{ route('items.index') }}"> <i class="align-middle" data-feather="package"></i> <span class="align-middle">Data Barang</span>
+                        <a class="sidebar-link" href="{{ route('items.index') }}">
+                            <i class="align-middle" data-feather="package"></i> <span class="align-middle">Data Barang</span>
                         </a>
                     </li>
 
@@ -98,12 +99,20 @@
                             </a>
 
                             <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                                <span class="text-dark">Halo, {{ auth()->user()->name }} ({{ ucfirst(auth()->user()->role) }})</span>
+                                <img src="https://ui-avatars.com/api/?name={{ urlencode(auth()->user()->name) }}&background=random&color=fff" class="avatar img-fluid rounded me-1" alt="{{ auth()->user()->name }}" />
+                                <span class="text-dark">{{ auth()->user()->name }}</span>
                             </a>
+
                             <div class="dropdown-menu dropdown-menu-end">
+                                <a class="dropdown-item" href="{{ route('profile.index') }}">
+                                    <i class="align-middle me-1" data-feather="user"></i> Profile Saya
+                                </a>
+
+                                <div class="dropdown-divider"></div>
+
                                 <form action="{{ route('logout') }}" method="POST">
                                     @csrf
-                                    <button type="submit" class="dropdown-item">Log out</button>
+                                    <button type="submit" class="dropdown-item text-danger">Log out</button>
                                 </form>
                             </div>
                         </li>
@@ -132,6 +141,7 @@
     </div>
 
     <script src="{{ asset('assets/js/app.js') }}"></script>
+
     @yield('scripts')
 </body>
 

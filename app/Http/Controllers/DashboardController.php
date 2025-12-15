@@ -12,26 +12,26 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        // 1. KARTU STATISTIK UTAMA
+        // KARTU STATISTIK UTAMA
         $totalItems = Item::count();
         $totalStock = Item::sum('stock');
 
-        // Hitung transaksi bulan ini (Gunakan 'qty')
+        // Hitung transaksi bulan ini
         $incomingThisMonth = IncomingItem::whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
-            ->sum('qty'); // <-- Perbaikan di sini
+            ->sum('qty');
 
         $outgoingThisMonth = OutgoingItem::whereMonth('created_at', Carbon::now()->month)
             ->whereYear('created_at', Carbon::now()->year)
-            ->sum('qty'); // <-- Perbaikan di sini
+            ->sum('qty'); 
 
-        // 2. PERINGATAN STOK MENIPIS
+        // PERINGATAN STOK MENIPIS
         $lowStockItems = Item::whereColumn('stock', '<=', 'stock_minimum')
             ->orderBy('stock', 'asc')
             ->limit(5)
             ->get();
 
-        // 3. TRANSAKSI TERBARU
+        // TRANSAKSI TERBARU
         $recentIncoming = IncomingItem::with('item')
             ->latest()
             ->limit(5)
@@ -42,7 +42,7 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // 4. DATA UNTUK GRAFIK (Chart.js)
+        // DATA UNTUK GRAFIK (Chart.js)
         $chartLabels = [];
         $chartIncoming = [];
         $chartOutgoing = [];
@@ -54,14 +54,13 @@ class DashboardController extends Controller
 
             $chartLabels[] = $monthName;
 
-            // Gunakan 'qty' untuk chart juga
             $chartIncoming[] = IncomingItem::whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $year)
-                ->sum('qty'); // <-- Perbaikan di sini
+                ->sum('qty');
 
             $chartOutgoing[] = OutgoingItem::whereMonth('created_at', $date->month)
                 ->whereYear('created_at', $year)
-                ->sum('qty'); // <-- Perbaikan di sini
+                ->sum('qty');
         }
 
         return view('index', compact(

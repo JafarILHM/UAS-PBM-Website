@@ -1,70 +1,51 @@
 <?php
 
-use App\Http\Controllers\AuthController;
-use App\Http\Controllers\AuditLogController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\ItemBatchController;
-use App\Http\Controllers\ItemController;
-use App\Http\Controllers\StockReservationController;
-use App\Http\Controllers\SupplierController;
-use App\Http\Controllers\UnitController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\api\AuthController;
+use App\Http\Controllers\api\DashboardController;
+use App\Http\Controllers\api\ItemController;
+use App\Http\Controllers\api\CategoryController;
+use App\Http\Controllers\api\SupplierController;
+use App\Http\Controllers\api\UnitController;
+use App\Http\Controllers\api\IncomingItemController;
+use App\Http\Controllers\api\OutgoingItemController;
+use App\Http\Controllers\api\ProfileController;
+use App\Http\Controllers\api\TransactionController;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
 |
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| is assigned the "api" middleware group. Enjoy building your API!
-|
 */
 
-// Public routes
-Route::post('/register', [AuthController::class, 'register']);
+// PUBLIC ROUTES (Bisa diakses tanpa Login / Tanpa Token)
 Route::post('/login', [AuthController::class, 'login']);
 
-// Protected routes (requires authentication)
+// PROTECTED ROUTES (Harus Login & Punya Token)
 Route::middleware('auth:sanctum')->group(function () {
+
+    // --- AUTHENTICATION & USER ---
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::get('/user', [AuthController::class, 'user']);
+    Route::get('/user', [AuthController::class, 'me']);
+    Route::post('/profile/update', [ProfileController::class, 'update']);
 
-    // Dashboard
+    // --- DASHBOARD ---
     Route::get('/dashboard', [DashboardController::class, 'index']);
+    Route::get('/transactions', [TransactionController::class, 'index']);
 
-    // Items
+    // --- MASTER DATA: BARANG (ITEMS) ---
+    Route::get('/items/scan/{sku}', [ItemController::class, 'findBySku']);
     Route::apiResource('items', ItemController::class);
-    Route::post('/items/incoming', [ItemController::class, 'incoming']);
-    Route::post('/items/outgoing', [ItemController::class, 'outgoing']);
-    Route::get('/items/export', [ItemController::class, 'export']);
-    Route::get('/items/{item}/barcode', [ItemController::class, 'showBarcode']);
-    Route::get('/items/scan/{code}', [ItemController::class, 'scan']);
 
-    // Suppliers
-    Route::apiResource('suppliers', SupplierController::class);
-
-    // Categories
+    // --- MASTER DATA LAINNYA ---
     Route::apiResource('categories', CategoryController::class);
-
-    // Units
+    Route::apiResource('suppliers', SupplierController::class);
     Route::apiResource('units', UnitController::class);
-    Route::get('/unit-conversions', [UnitController::class, 'indexConversions']);
-    Route::post('/unit-conversions', [UnitController::class, 'storeConversion']);
-    Route::get('/unit-conversions/{unitConversion}', [UnitController::class, 'showConversion']);
-    Route::put('/unit-conversions/{unitConversion}', [UnitController::class, 'updateConversion']);
-    Route::delete('/unit-conversions/{unitConversion}', [UnitController::class, 'destroyConversion']);
 
-    // Item Batches
-    Route::apiResource('item-batches', ItemBatchController::class);
+    // --- TRANSAKSI (Update Stok) ---
+    Route::post('/incoming', [IncomingItemController::class, 'store']);
+    Route::post('/outgoing', [OutgoingItemController::class, 'store']);
 
-    // Stock Reservations
-    Route::apiResource('stock-reservations', StockReservationController::class);
-    Route::post('/stock-reservations/{stockReservation}/fulfill', [StockReservationController::class, 'fulfill']);
-
-    // Audit Logs (read-only)
-    Route::get('/audit-logs', [AuditLogController::class, 'index']);
-    Route::get('/audit-logs/{auditLog}', [AuditLogController::class, 'show']);
 });
