@@ -1,28 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Validator; 
 use App\Models\User;
 
 class AuthController extends Controller
 {
-    /**
-     * Login User & Return Token
-     */
     public function login(Request $request)
     {
-        // Gunakan Validator::make agar tidak redirect jika gagal
+        // Tidak perlu tanda \ lagi
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
             'password' => 'required',
         ]);
 
         if ($validator->fails()) {
-            return response()->json(['success' => false, 'message' => $validator->errors()], 422);
+            return response()->json(['success' => false, 'message' => $validator->errors()->first()], 422);
         }
 
         if (!Auth::attempt($request->only('email', 'password'))) {
@@ -46,22 +43,15 @@ class AuthController extends Controller
         ]);
     }
 
-    /**
-     * Logout & Hapus Token
-     */
     public function logout(Request $request)
     {
         $request->user()->currentAccessToken()->delete();
-
         return response()->json([
             'success' => true,
             'message' => 'Logout berhasil'
         ]);
     }
 
-    /**
-     * Cek Profile User saat ini
-     */
     public function me(Request $request)
     {
         return response()->json([

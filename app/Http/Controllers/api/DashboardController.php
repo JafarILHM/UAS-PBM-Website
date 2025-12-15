@@ -1,9 +1,8 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\api; 
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Item;
 use App\Models\Supplier;
 use App\Models\IncomingItem;
@@ -15,9 +14,7 @@ class DashboardController extends Controller
     {
         $totalItems = Item::count();
         $totalSuppliers = Supplier::count();
-
         $lowStockCount = Item::whereColumn('stock', '<=', 'stock_minimum')->count();
-
         $recentIncoming = IncomingItem::with('item')->latest()->take(3)->get();
         $recentOutgoing = OutgoingItem::with('item')->latest()->take(3)->get();
 
