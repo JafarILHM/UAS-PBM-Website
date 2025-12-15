@@ -12,6 +12,7 @@ use App\Http\Controllers\api\IncomingItemController;
 use App\Http\Controllers\api\OutgoingItemController;
 use App\Http\Controllers\api\ProfileController;
 use App\Http\Controllers\api\TransactionController;
+use App\Http\Controllers\api\ExportController;
 
 /*
 |--------------------------------------------------------------------------
@@ -50,5 +51,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // --- TRANSAKSI (Update Stok) ---
     Route::post('/incoming', [IncomingItemController::class, 'store']);
     Route::post('/outgoing', [OutgoingItemController::class, 'store']);
+
+    // --- EXPORT ---
+    Route::get('/export/items', [ExportController::class, 'exportItems']);
+    Route::get('/export/transactions', [ExportController::class, 'exportTransactions']);
 
 });
