@@ -1,42 +1,38 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Unit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator; 
 
 class UnitController extends Controller
 {
     public function index()
     {
-        return response()->json([
-            'success' => true,
-            'data' => Unit::latest()->get()
-        ]);
+        return response()->json(['success' => true, 'data' => Unit::latest()->get()]);
     }
 
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'symbol' => 'required'
         ]);
 
-        $unit = Unit::create($request->all());
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Satuan berhasil ditambahkan',
-            'data' => $unit
-        ]);
+        $unit = Unit::create($request->all());
+        return response()->json(['success' => true, 'message' => 'Satuan berhasil ditambahkan', 'data' => $unit]);
     }
 
     public function show($id)
     {
         $unit = Unit::find($id);
         if (!$unit) return response()->json(['success'=>false, 'message'=>'Data tidak ditemukan'], 404);
-
         return response()->json(['success' => true, 'data' => $unit]);
     }
 
@@ -45,18 +41,17 @@ class UnitController extends Controller
         $unit = Unit::find($id);
         if (!$unit) return response()->json(['success'=>false, 'message'=>'Data tidak ditemukan'], 404);
 
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'name' => 'required',
             'symbol' => 'required'
         ]);
 
-        $unit->update($request->all());
+        if ($validator->fails()) {
+            return response()->json(['errors' => $validator->errors()], 422);
+        }
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Satuan berhasil diupdate',
-            'data' => $unit
-        ]);
+        $unit->update($request->all());
+        return response()->json(['success' => true, 'message' => 'Satuan diupdate', 'data' => $unit]);
     }
 
     public function destroy($id)
@@ -65,10 +60,6 @@ class UnitController extends Controller
         if (!$unit) return response()->json(['success'=>false, 'message'=>'Data tidak ditemukan'], 404);
 
         $unit->delete();
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Satuan berhasil dihapus'
-        ]);
+        return response()->json(['success' => true, 'message' => 'Satuan dihapus']);
     }
 }

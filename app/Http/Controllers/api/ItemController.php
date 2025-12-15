@@ -1,28 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use App\Models\Item;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class ItemController extends Controller
 {
-    // Ambil Semua Barang
     public function index()
     {
         $items = Item::with(['category', 'unit'])->latest()->get();
-
-        return response()->json([
-            'success' => true,
-            'data' => $items
-        ]);
+        return response()->json(['success' => true, 'data' => $items]);
     }
 
-    // Tambah Barang dari HP
     public function store(Request $request)
     {
-        $validator = \Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'sku' => 'required|unique:items',
             'name' => 'required',
             'category_id' => 'required',
@@ -35,52 +30,38 @@ class ItemController extends Controller
         }
 
         $item = Item::create($request->all());
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Barang berhasil disimpan',
-            'data' => $item
-        ]);
+        return response()->json(['success' => true, 'message' => 'Barang berhasil disimpan', 'data' => $item]);
     }
 
-    // Update Barang
-    public function update(Request $request, Item $item)
+    public function show($id)
     {
-        $item->update($request->all());
-        return response()->json([
-            'success' => true,
-            'message' => 'Barang update',
-            'data' => $item
-        ]);
+        $item = Item::with(['category', 'unit'])->find($id);
+        if (!$item) return response()->json(['success'=>false, 'message'=>'Data tidak ditemukan'], 404);
+        return response()->json(['success' => true, 'data' => $item]);
     }
 
-    // Hapus Barang
-    public function destroy(Item $item)
-    {
-        $item->delete();
-        return response()->json([
-            'success' => true,
-            'message' => 'Barang dihapus'
-        ]);
-    }
-
-    /**
-     * Cari Barang berdasarkan SKU / Barcode (Untuk Fitur Scan di HP)
-     */
     public function findBySku($sku)
     {
         $item = Item::with(['category', 'unit'])->where('sku', $sku)->first();
+        if (!$item) return response()->json(['success' => false, 'message' => 'Barang tidak ditemukan'], 404);
+        return response()->json(['success' => true, 'data' => $item]);
+    }
 
-        if (!$item) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Barang dengan kode tersebut tidak ditemukan.'
-            ], 404);
-        }
+    public function update(Request $request, $id)
+    {
+         $item = Item::find($id);
+         if (!$item) return response()->json(['success'=>false, 'message'=>'Data tidak ditemukan'], 404);
 
-        return response()->json([
-            'success' => true,
-            'data' => $item
-        ]);
+         $item->update($request->all());
+         return response()->json(['success' => true, 'message' => 'Barang update', 'data' => $item]);
+    }
+
+    public function destroy($id)
+    {
+        $item = Item::find($id);
+        if (!$item) return response()->json(['success'=>false, 'message'=>'Data tidak ditemukan'], 404);
+
+        $item->delete();
+        return response()->json(['success' => true, 'message' => 'Barang dihapus']);
     }
 }

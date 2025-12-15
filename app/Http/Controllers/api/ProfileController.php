@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Http\Controllers\Api;
+namespace App\Http\Controllers\api;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator; 
 
 class ProfileController extends Controller
 {
-    // Update Profil dari HP
     public function update(Request $request)
     {
         $user = auth()->user();
 
-        $validator = \Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
-            'password' => 'nullable|min:6', // Password tidak wajib diisi
+            'password' => 'nullable|min:6',
         ]);
 
         if ($validator->fails()) {
