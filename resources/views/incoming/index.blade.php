@@ -31,7 +31,7 @@
                             <small class="text-muted">{{ $inc->item->sku ?? '' }}</small>
                         </td>
                         <td>
-                            <span class="badge bg-success">+ {{ $inc->quantity }} {{ $inc->item->unit ?? '' }}</span>
+                            <span class="badge bg-success">+ {{ $inc->quantity }} {{ $inc->item->unit->symbol ?? '' }}</span>
                         </td>
                         <td>{{ $inc->supplier->name ?? '-' }}</td>
                         <td>
