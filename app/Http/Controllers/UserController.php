@@ -66,7 +66,7 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => ['required', 'email', Rule::unique('users')->ignore($user->id)],
             'role' => 'required|in:admin,staff',
-            'password' => 'nullable|min:6|confirmed',
+            'password' => 'nullable|min:6|confirmed', // Password opsional saat edit
         ]);
 
         $user->name = $request->name;
