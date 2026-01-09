@@ -27,7 +27,8 @@ class ItemController extends Controller
      */
     public function export()
     {
-        return Excel::download(new ItemsExport, 'laporan-stok-barang.xlsx');
+        $fileName = 'laporan-stok-barang_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+        return Excel::download(new ItemsExport, $fileName);
     }
 
     /**

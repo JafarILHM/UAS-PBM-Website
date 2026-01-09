@@ -11,11 +11,13 @@ class ExportController extends Controller
 {
     public function exportItems()
     {
-        return Excel::download(new ItemsExport, 'items.xlsx');
+        $fileName = 'items_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+        return Excel::download(new ItemsExport, $fileName);
     }
 
     public function exportTransactions()
     {
-        return Excel::download(new TransactionsExport, 'transactions.xlsx');
+        $fileName = 'transactions_' . now()->format('Y-m-d_H-i-s') . '.xlsx';
+        return Excel::download(new TransactionsExport, $fileName);
     }
 }
